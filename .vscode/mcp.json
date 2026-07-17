@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "evolver-proxy": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/mcp/evolver-proxy.mjs"],
+      "env": {
+        "EVOMAP_PROXY_PORT": "19820",
+        "A2A_HUB_URL": "https://evomap.ai",
+        "A2A_NODE_ID": ""
+      }
+    }
+  }
+}

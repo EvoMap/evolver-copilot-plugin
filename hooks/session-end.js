@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 EvoMap
 //
-// Claude Code hook: Stop.
+// Evolver runtime helper: record a session-end outcome from the git diff.
 // Records the outcome of the session by inspecting the git diff of the project
 // directory, writing a memory-graph entry (and optionally posting to a Hub),
 // and leaving a breadcrumb in the evolution log.
@@ -287,7 +287,7 @@ async function recordToHub(payload) {
 /**
  * Append one JSON entry to the memory graph. The field shape here is a hard
  * contract consumed by external tooling (the @evomap/evolver engine and the
- * sibling Cursor plugin) — keep it exact. Returns true on success.
+ * sibling platform packages) — keep it exact. Returns true on success.
  */
 function recordToLocal(entry, projectDir) {
   try {

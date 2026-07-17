@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 EvoMap
 //
-// Claude Code hook: PostToolUse (Write|Edit|MultiEdit).
+// Evolver runtime helper: inspect edited content after Copilot/agent file changes.
 // Inspects freshly edited content for evolution signals (errors, perf hints,
 // feature requests, ...) and, when any are found, nudges the agent to consider
 // recording the outcome.
@@ -34,8 +34,8 @@ function emit(obj) {
 }
 
 /**
- * Pull the edited content out of the various shapes Claude Code may use.
- * PostToolUse nests tool args under `tool_input`; flat shapes are also handled.
+ * Pull the edited content out of the various shapes adapters may use.
+ * Claude-style adapters nest tool args under `tool_input`; flat shapes are also handled.
  */
 function extractContent(input) {
   if (!input || typeof input !== 'object') {

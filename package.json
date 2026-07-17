@@ -1,0 +1,55 @@
+{
+  "name": "evolver-copilot-plugin",
+  "version": "0.1.0",
+  "description": "Official EvoMap Evolver customization pack for GitHub Copilot: persistent, auditable agent evolution memory powered by GEP.",
+  "type": "commonjs",
+  "bin": {
+    "evolver-copilot-plugin": "scripts/install.js"
+  },
+  "files": [
+    "hooks/",
+    "mcp/",
+    "skills/",
+    ".github/copilot-instructions.md",
+    ".github/prompts/",
+    ".vscode/mcp.json",
+    "scripts/install.js",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "assets/"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "verify": "node scripts/install.js --verify --config-root .",
+    "pack:dry": "npm pack --dry-run"
+  },
+  "keywords": [
+    "github-copilot",
+    "copilot",
+    "vscode",
+    "mcp",
+    "evomap",
+    "evolver",
+    "gep",
+    "agent-memory",
+    "self-improvement"
+  ],
+  "author": {
+    "name": "EvoMap",
+    "email": "team@evomap.ai",
+    "url": "https://evomap.ai"
+  },
+  "homepage": "https://evomap.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EvoMap/evolver-copilot-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EvoMap/evolver-copilot-plugin/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

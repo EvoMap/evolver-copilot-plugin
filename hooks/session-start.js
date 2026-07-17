@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 EvoMap
 //
-// Claude Code hook: SessionStart.
+// Evolver runtime helper: prepare session-start evolution memory context.
 // Surfaces recent, workspace-scoped evolution memory (and a one-time notice if
 // the folder isn't a git repo) to the agent as additional context.
 //
@@ -291,8 +291,8 @@ function main() {
   }
 
   const joined = parts.join('\n\n');
-  // Claude Code SessionStart contract: additionalContext is injected into the
-  // session. Emit both the top-level field and the hookSpecificOutput form.
+  // Keep the sibling hook contract shape so this script stays black-box testable
+  // and interoperable with adapters that consume additionalContext.
   emit({
     additionalContext: joined,
     hookSpecificOutput: {
@@ -302,7 +302,7 @@ function main() {
   });
 }
 
-// This hook does not need stdin, but Claude Code still pipes a JSON object.
+// This hook does not need stdin, but adapters may pipe a JSON object.
 // Drain it (so the writer never races a half-drained pipe / gets EPIPE) and
 // only then run main(). A short watchdog guarantees we still run if stdin never
 // closes. main() stays synchronous; we only gate when it is invoked.

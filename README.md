@@ -2,125 +2,123 @@
   <img src="assets/logo.png" alt="Evolver" width="96" height="96" />
 </p>
 
-# Evolver — Self-Evolving Agent Memory (Claude Code Plugin)
+# Evolver — Self-Evolving Agent Memory for GitHub Copilot
 
-Give the Claude Code agent a **persistent, auditable evolution memory** plus a
+Give GitHub Copilot in VS Code a **persistent, auditable evolution memory** plus a
 bridge to the **EvoMap network**. Instead of re-solving the same problem every
-session, the agent recalls what worked before, notices improvement signals as it
-edits, records how each task turned out, and can search/reuse proven genes &
-capsules from the network — so the next session starts smarter.
+session, Copilot is instructed to recall what worked before, reuse proven genes &
+capsules from the network when available, and record durable outcomes through the
+same Evolver memory format used by the other EvoMap agent integrations.
 
 Powered by the [Genome Evolution Protocol (GEP)](https://evomap.ai) and the
 [`@evomap/evolver`](https://github.com/EvoMap/evolver) engine. Sibling of the
-[Evolver Cursor plugin](https://github.com/EvoMap/evolver-cursor-plugin) — same
-memory format, same clean-room hooks.
+[Evolver Claude Code plugin](https://github.com/EvoMap/evolver-claude-code-plugin)
+and [Evolver Cursor plugin](https://github.com/EvoMap/evolver-cursor-plugin) —
+same memory format, same clean-room runtime helpers, Copilot-native packaging.
 
-> **Status:** v0.2.0 — hooks + skill + commands + MCP bridge. Works standalone
-> (local memory) and, when the Proxy is running, exposes the EvoMap mailbox
+> **Status:** v0.1.0 — Copilot custom instructions + prompt files + VS Code MCP
+> config + local Evolver runtime files. Works standalone for guided local memory
+> workflows and, when the Proxy is running, exposes the EvoMap mailbox
 > (genes/capsules) as MCP tools.
 
 ## What it does
 
-Three hooks run automatically — you don't invoke them:
+GitHub Copilot does not currently expose Claude-Code-style lifecycle hooks for
+third-party packages, so this repository packages Evolver for the surfaces Copilot
+and VS Code do support:
 
-| Hook | Event | Effect |
+| Surface | Path | Effect |
 |---|---|---|
-| `session-start.js` | `SessionStart` | Injects a summary of recent **successful** outcomes for this workspace (score ≥ 0.5, < 7 days, max 3) as context. Also, when a node has been registered locally but not yet connected to the network, gives a one-time (throttled) nudge to claim it. |
-| `signal-detect.js` | `PostToolUse` (Write/Edit) | Detects improvement signals (`log_error`, `perf_bottleneck`, `capability_gap`, …) in edits. |
-| `session-end.js` | `Stop` | Classifies the current working-tree/staged git diff once per session and appends the outcome to the evolution memory graph. |
+| Custom instructions | `.github/copilot-instructions.md` | Teaches Copilot to use Evolver memory on substantive tasks and to record reusable outcomes. |
+| Prompt files | `.github/prompts/evolver-*.prompt.md` | Reusable Copilot Chat prompts for evolve/search/status/run/review/solidify/sync/distill workflows. |
+| MCP bridge | `.vscode/mcp.json` + `mcp/evolver-proxy.mjs` | Exposes the local EvoMap Proxy mailbox as MCP tools in VS Code. |
+| Runtime helpers | `hooks/*.js` | The same clean-room session-start/signal/session-end helpers used by sibling integrations, available for local automation and black-box validation. |
 
-Memory is **workspace-scoped** (via a forge-resistant `.evolver/workspace-id`),
-so one project's outcomes never leak into another's session.
-
-An **MCP bridge** (`evolver-proxy`, zero-dependency stdio server) exposes the
-local EvoMap Proxy mailbox as tools:
+The MCP bridge (`evolver-proxy`, zero-dependency stdio server) exposes the local
+EvoMap Proxy mailbox as tools:
 
 | Tool | Purpose |
 |---|---|
 | `evolver_status` | Proxy state: node id, pending counts, last Hub sync. |
-| `evolver_search_assets` | Search the network for reusable genes/capsules by signal. |
+| `evolver_search_assets` | Search the network for reusable genes/capsules by signal or query. |
 | `evolver_fetch_asset` | Fetch full asset content by id. |
 | `evolver_publish_asset` | Queue a gene/capsule for Hub review. |
 | `evolver_distill_conversation` | Distill a high-confidence reusable conversation outcome into a local Gene/Capsule and queue it for Hub review. |
-| `evolver_poll` | Poll the local mailbox (asset results, hub events, tasks). |
-
-It also ships a **`capability-evolver` skill** (recall → work → record loop) and
-slash commands: **`/evolver:evolve`**, **`/evolver:search`**, **`/evolver:status`**,
-and — when `@evomap/evolver` is installed — **`/evolver:run`**, **`/evolver:solidify`**,
-**`/evolver:review`**, **`/evolver:sync`**, **`/evolver:distill`**.
+| `evolver_poll` | Poll the local mailbox for asset results, hub events, and tasks. |
 
 ## Install
 
-```text
-/plugin marketplace add EvoMap/evolver-claude-code-plugin
-/plugin install evolver@evolver
+### Into a workspace
+
+```bash
+npx -y github:EvoMap/evolver-copilot-plugin --install --workspace /path/to/your/repo
 ```
 
-Restart Claude Code (or `/reload-plugins`). That's it — **local memory works
-with zero config**: no account, no key, nothing to fill in.
+Or from a local checkout:
 
-### Connecting to the EvoMap network (optional)
+```bash
+git clone https://github.com/EvoMap/evolver-copilot-plugin
+cd evolver-copilot-plugin
+node scripts/install.js --install --workspace /path/to/your/repo
+```
 
-The network layer (searching/reusing genes & capsules) is opt-in. To connect:
+Open that workspace in VS Code with GitHub Copilot Chat enabled. When VS Code asks
+whether to trust or enable the `evolver-proxy` MCP server, enable it for trusted
+workspaces only.
 
-1. In the plugin's config, **leave "Node ID" blank**. Don't paste an old id and
-   don't go hunting for a secret — blank is the intended path.
-2. Install the engine and run it once inside a git repo:
+### Verify an install
 
-   ```bash
-   npm i -g @evomap/evolver
-   evolver
-   ```
-
-   The first run registers a fresh node for you and prints a **claim link**.
-3. Open that link while signed in to [evomap.ai](https://evomap.ai) to claim the
-   node. Check status any time with `/evolver:status`.
-
-If you see a different, older node than you expected, don't worry about it —
-just claim the current one. Reusing a specific older node requires that node's
-secret, which is more trouble than it's worth.
+```bash
+npx -y github:EvoMap/evolver-copilot-plugin --verify --workspace /path/to/your/repo
+```
 
 ### Local development
 
 ```bash
-git clone https://github.com/EvoMap/evolver-claude-code-plugin
-claude --plugin-dir ./evolver-claude-code-plugin
+git clone https://github.com/EvoMap/evolver-copilot-plugin
+cd evolver-copilot-plugin
+npm test
+npm run blackbox
 ```
 
 ## Requirements
 
-- **Node.js** ≥ 18 (hooks and the MCP bridge are Node; the bridge uses global `fetch`).
-- **Git** — outcomes are derived from the project's git diff.
-- For the MCP tools: the EvoMap **Proxy** running locally (it starts when you run
-  the `@evomap/evolver` CLI once in a git repo). The hooks need none of this.
+- **VS Code** with GitHub Copilot Chat.
+- **Node.js** ≥ 18 for the installer, runtime helpers, and MCP bridge.
+- **Git** for outcome recording helpers and the optional full Evolver engine.
+- For MCP tools: the EvoMap **Proxy** running locally. It starts when you run the
+  `@evomap/evolver` CLI once in a git repo.
 
 ## Modes
 
-### Local mode (default, zero config)
+### Copilot-guided local mode (default, zero config)
 
-The hooks write outcomes to `~/.evolver/memory/evolution/memory_graph.jsonl` (or
-the project's `memory/evolution/` inside an evolver-managed repo). Recall and
-record work immediately. **No account, no key, no network.** The MCP tools
-report the Proxy is down until you start it — everything else still works.
+The installed instructions and prompt files tell Copilot where Evolver memory
+lives and how to use it:
+
+- `~/.evolver/memory/evolution/memory_graph.jsonl`, or
+- the project's `memory/evolution/memory_graph.jsonl` when present.
+
+No account, key, or network is required for local recall/record workflows.
 
 ### Full engine + Proxy (MCP tools)
 
 ```bash
 npm install -g @evomap/evolver
+evolver
 ```
 
-Running `evolver` launches the local **Proxy mailbox**; the `evolver-proxy` MCP
-bridge then connects to it (reading the live url + auth token from
-`~/.evolver/settings.json`) so `evolver_search_assets` etc. return real network
-assets. The engine's CLI (`evolver run`, `evolver review`, …) is surfaced as
-`/evolver:*` commands. The hooks never shell out to the engine; they just record
-the memory the pipeline consumes.
+Running `evolver` launches the local **Proxy mailbox**. The `evolver-proxy` MCP
+bridge reads the live url + auth token from `~/.evolver/settings.json`, so Copilot
+can call `evolver_search_assets`, `evolver_fetch_asset`, and related tools from VS
+Code. The engine's CLI (`evolver run`, `evolver review`, …) is surfaced through
+prompt files.
 
 ### EvoMap Hub (community strategies)
 
-To record outcomes to the Hub from the `Stop` hook, set credentials. The hook
-uses Node's built-in `fetch`, so the API key is not exposed in process
-arguments:
+To record outcomes to the Hub from automation that invokes the runtime helpers,
+set credentials. The helper uses Node's built-in `fetch`, so the API key is not
+exposed in process arguments:
 
 ```bash
 export EVOMAP_HUB_URL="https://evomap.ai"
@@ -128,32 +126,33 @@ export EVOMAP_API_KEY="…"     # from your EvoMap node
 export EVOMAP_NODE_ID="…"
 ```
 
-## Architecture (the MCP bridge vs. gep-mcp-server)
+## Architecture
 
-- **This plugin's `evolver-proxy` bridge** is a thin, MIT, zero-dependency glue
-  that exposes the *local* Proxy mailbox (the genes/capsules already synced to
-  your machine) as MCP tools, and degrades gracefully when the Proxy is down.
-- **`@evomap/gep-mcp-server`** is the standalone, Apache-licensed **full GEP
-  protocol layer** — the complete `gep_*` tool surface for any MCP client. If you
-  want that richer surface (beyond the mailbox proxy), add it to your MCP config
-  directly; the two compose.
-- **`@evomap/evolver`** is the GPL-licensed engine (daemon + CLI). The plugin's
-  hooks are an independent MIT clean-room implementation that records memory in
-  the same format the engine reads, so they interoperate when you install it.
+- **This repository's Copilot packaging** is VS Code/Copilot-native: custom
+  instructions, prompt files, and `.vscode/mcp.json`.
+- **The `evolver-proxy` bridge** is a thin, MIT, zero-dependency glue layer that
+  exposes the *local* Proxy mailbox as MCP tools and degrades gracefully when the
+  Proxy is down.
+- **`@evomap/gep-mcp-server`** is the standalone, Apache-licensed full GEP
+  protocol layer. Add it separately if you want the complete `gep_*` tool surface.
+- **`@evomap/evolver`** is the GPL-licensed engine (daemon + CLI). The runtime
+  helpers here are independent MIT clean-room implementations that record memory
+  in the same format the engine reads.
 
 ## Environment variables
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `MEMORY_GRAPH_PATH` | (auto) | Override the memory graph file location. |
-| `EVOMAP_PROXY_PORT` | `19820` | Proxy port the MCP bridge falls back to (live url is read from `~/.evolver/settings.json`). |
-| `A2A_HUB_URL` / `A2A_NODE_ID` | (config) | Passed to the bridge from plugin config. |
-| `EVOMAP_HUB_URL` / `EVOMAP_API_KEY` / `EVOMAP_NODE_ID` | (unset) | Enable Hub recording from the Stop hook. |
+| `EVOMAP_PROXY_PORT` | `19820` | Proxy port the MCP bridge falls back to. |
+| `A2A_HUB_URL` / `A2A_NODE_ID` | `https://evomap.ai` / unset | Passed to the bridge from VS Code MCP config. |
+| `EVOMAP_HUB_URL` / `EVOMAP_API_KEY` / `EVOMAP_NODE_ID` | (unset) | Enable Hub recording from runtime helpers. |
 | `EVOLVER_WORKSPACE_ID` | (auto) | Override the workspace scoping id. |
+| `COPILOT_WORKSPACE_DIR` | (unset) | Optional project-dir hint for local automation. |
 
 ## License
 
-MIT © EvoMap. The bundled hook scripts and the MCP bridge are original,
+MIT © EvoMap. The bundled runtime helper scripts and MCP bridge are original,
 clean-room implementations — **not** derived from the GPL-licensed
-`@evomap/evolver` source. Installing `@evomap/evolver` (itself GPL) to unlock the
-full pipeline is an independent, optional step. See [`LICENSE`](LICENSE).
+`@evomap/evolver` source. Installing `@evomap/evolver` to unlock the full pipeline
+is an independent, optional step. See [`LICENSE`](LICENSE).

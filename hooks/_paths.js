@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 EvoMap
 //
-// Shared path / workspace helpers for the Evolver Claude Code plugin hooks.
+// Shared path / workspace helpers for the Evolver Copilot runtime helpers.
 // Pure Node.js built-ins, no external dependencies. Every exported helper is
 // defensive: it must never throw, because the hooks that call it are expected
 // to emit valid JSON and exit 0 even under failure conditions.
@@ -37,11 +37,21 @@ function looksLikeDir(candidate) {
  * Resolve the directory of the user's current project.
  *
  * Preference order:
- *   1. CURSOR_PROJECT_DIR  (if it names an existing directory)
- *   2. CLAUDE_PROJECT_DIR  (if it names an existing directory)
- *   3. the process working directory
+ *   1. COPILOT_WORKSPACE_DIR  (if it names an existing directory)
+ *   2. VSCODE_CWD             (if it names an existing directory)
+ *   3. CURSOR_PROJECT_DIR     (sibling compatibility)
+ *   4. CLAUDE_PROJECT_DIR     (sibling compatibility)
+ *   5. the process working directory
  */
 function resolveProjectDir() {
+  const fromCopilot = process.env.COPILOT_WORKSPACE_DIR;
+  if (looksLikeDir(fromCopilot)) {
+    return fromCopilot;
+  }
+  const fromVsCode = process.env.VSCODE_CWD;
+  if (looksLikeDir(fromVsCode)) {
+    return fromVsCode;
+  }
   const fromCursor = process.env.CURSOR_PROJECT_DIR;
   if (looksLikeDir(fromCursor)) {
     return fromCursor;

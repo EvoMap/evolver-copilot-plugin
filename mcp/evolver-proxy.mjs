@@ -5,7 +5,7 @@
  * Evolver Proxy MCP bridge (stdio, zero dependencies).
  *
  * Exposes the EvoMap local Proxy mailbox — genes, capsules, status — as MCP
- * tools so Claude can search/reuse/publish evolution assets natively.
+ * tools so Copilot can search/reuse/publish evolution assets natively.
  *
  * Transport: newline-delimited JSON-RPC 2.0 over stdin/stdout (MCP stdio).
  * All diagnostics go to stderr; stdout carries protocol traffic ONLY.
@@ -93,16 +93,16 @@ async function proxyFetch(method, path, body) {
       let hint = '';
       if ([401, 403].includes(res.status)) {
         hint = token
-          ? ' The Proxy token in ~/.evolver/settings.json looks stale (the Proxy mints a fresh token on restart). Restart this Claude session so the bridge re-reads it, or run /evolver:status.'
-          : ` No Proxy token found in ~/.evolver/settings.json and the request was rejected — another process may be using ${base}. Start the Proxy (run \`evolver\` once in a git repo) or set EVOMAP_PROXY_PORT, then run /evolver:status.`;
+          ? ' The Proxy token in ~/.evolver/settings.json looks stale (the Proxy mints a fresh token on restart). Restart VS Code or reload the MCP server so the bridge re-reads it, then run the evolver-status prompt.'
+          : ` No Proxy token found in ~/.evolver/settings.json and the request was rejected — another process may be using ${base}. Start the Proxy (run \`evolver\` once in a git repo) or set EVOMAP_PROXY_PORT, then run the evolver-status prompt.`;
       } else if (res.status === 404) {
-        hint = ` Endpoint not found at ${base} — it may not be the Evolver Proxy. Confirm with /evolver:status.`;
+        hint = ` Endpoint not found at ${base} — it may not be the Evolver Proxy. Confirm with the evolver-status prompt.`;
       }
       return { ok: false, error: `Proxy at ${base} returned HTTP ${res.status}: ${typeof data === 'object' ? JSON.stringify(data) : text}.${hint}` };
     }
     return { ok: true, data };
   } catch (e) {
-    const hint = `Evolver Proxy not reachable at ${base}. Start it by running \`evolver\` once inside a git repo (the CLI launches the Proxy), or run /evolver:status. Set EVOMAP_PROXY_PORT if you use a non-default port.`;
+    const hint = `Evolver Proxy not reachable at ${base}. Start it by running \`evolver\` once inside a git repo (the CLI launches the Proxy), or run the evolver-status prompt. Set EVOMAP_PROXY_PORT if you use a non-default port.`;
     return { ok: false, error: `${e.name === 'AbortError' ? 'Proxy request timed out' : 'Proxy connection failed: ' + e.message}. ${hint}` };
   } finally {
     clearTimeout(timer);
@@ -195,13 +195,13 @@ const TOOLS = [
   },
   {
     name: 'evolver_distill_conversation',
-    description: 'Distill a reusable Gene/Capsule from the current Claude Code conversation. Provide a concrete summary, strategy/evidence, artifacts, and validation; the Proxy gates quality, stores locally, and queues Hub publishing.',
+    description: 'Distill a reusable Gene/Capsule from the current GitHub Copilot conversation. Provide a concrete summary, strategy/evidence, artifacts, and validation; the Proxy gates quality, stores locally, and queues Hub publishing.',
     inputSchema: {
       type: 'object',
       properties: {
         title: { type: 'string' },
         summary: { type: 'string', description: 'Concrete reusable lesson or capability distilled from the conversation.' },
-        platform: { type: 'string', default: 'claude-code' },
+        platform: { type: 'string', default: 'github-copilot' },
         thread_id: { type: 'string' },
         user_prompt: { type: 'string' },
         assistant_summary: { type: 'string' },
@@ -217,7 +217,7 @@ const TOOLS = [
       required: ['summary'],
       additionalProperties: false,
     },
-    handler: (a) => proxyFetch('POST', '/conversation/distill', { ...a, platform: a.platform || 'claude-code' }),
+    handler: (a) => proxyFetch('POST', '/conversation/distill', { ...a, platform: a.platform || 'github-copilot' }),
   },
   {
     name: 'evolver_poll',

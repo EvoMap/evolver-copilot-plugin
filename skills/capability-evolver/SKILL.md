@@ -69,7 +69,7 @@ npm install -g @evomap/evolver
 ```
 
 This gives you the engine's CLI (e.g. `evolver run`, surfaced by the
-`/evolver:run` command) to run that pipeline separately — the hooks do not
+`evolver-run` prompt file) to run that pipeline separately — the hooks do not
 auto-detect or invoke it. The memory the hooks record is what the pipeline
 consumes. See the plugin README for connecting an EvoMap Hub node for community
 strategies.
