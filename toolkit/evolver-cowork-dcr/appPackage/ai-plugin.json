@@ -1,0 +1,24 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.4/schema.json",
+    "schema_version": "v2.4",
+    "name_for_human": "Evolver DCR verification",
+    "description_for_human": "Provision and verify per-user EvoMap OAuth for Evolver through Microsoft 365 Agents Toolkit.",
+    "contact_email": "team@evomap.ai",
+    "namespace": "evomapai",
+    "functions": [],
+    "runtimes": [
+        {
+            "type": "RemoteMCPServer",
+            "spec": {
+                "url": "https://evomap.ai/mcp"
+            },
+            "run_for_functions": [
+                "*"
+            ],
+            "auth": {
+                "type": "OAuthPluginVault",
+                "reference_id": "${{MCP_DA_AUTH_ID_EVOMAPAI}}"
+            }
+        }
+    ]
+}

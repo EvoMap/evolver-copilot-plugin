@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "evomapai": {
+      "type": "http",
+      "url": "https://evomap.ai/mcp"
+    }
+  }
+}

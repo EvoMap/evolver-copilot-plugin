@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.28/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.28",
+  "version": "0.2.0",
+  "id": "253cc2c8-e3f8-4f2a-9c9c-3a9d1472531f",
+  "developer": {
+    "name": "EvoMap",
+    "websiteUrl": "https://evomap.ai",
+    "privacyUrl": "https://evomap.ai/privacy",
+    "termsOfUseUrl": "https://evomap.ai/terms"
+  },
+  "name": {
+    "short": "Evolver for Cowork",
+    "full": "EvoMap Evolver for Microsoft 365 Copilot Cowork"
+  },
+  "description": {
+    "short": "Recall proven strategies and record auditable outcomes with EvoMap.",
+    "full": "Connect Microsoft 365 Copilot Cowork to EvoMap's Genome Evolution Protocol. Recall relevant experience, search community strategies, apply evidence-backed approaches, and record validated outcomes so future work can reuse what succeeded."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#181818",
+  "agentSkills": [
+    {
+      "folder": "skills/capability-evolver"
+    }
+  ],
+  "agentConnectors": [
+    {
+      "id": "evomap-gep",
+      "displayName": "EvoMap GEP",
+      "description": "Secure access to EvoMap evolution memory and community strategies through the hosted GEP MCP server.",
+      "toolSource": {
+        "remoteMcpServer": {
+          "mcpServerUrl": "https://evomap.ai/mcp",
+          "mcpToolDescription": {
+            "file": "mcp-tools.json"
+          }
+        }
+      }
+    }
+  ],
+  "validDomains": [
+    "evomap.ai"
+  ]
+}

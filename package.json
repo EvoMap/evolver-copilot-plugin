@@ -1,19 +1,21 @@
 {
   "name": "evolver-copilot-plugin",
-  "version": "0.1.0",
-  "description": "Official EvoMap Evolver customization pack for GitHub Copilot: persistent, auditable agent evolution memory powered by GEP.",
+  "version": "0.2.0",
+  "description": "Official EvoMap Evolver integration for GitHub Copilot and Microsoft 365 Copilot Cowork.",
   "type": "commonjs",
   "bin": {
     "evolver-copilot-plugin": "scripts/install.js"
   },
   "files": [
+    "cowork/",
+    "dist/evolver-cowork.zip",
     "hooks/",
     "mcp/",
     "skills/",
     ".github/copilot-instructions.md",
     ".github/prompts/",
     ".vscode/mcp.json",
-    "scripts/install.js",
+    "scripts/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
@@ -22,6 +24,19 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "verify": "node scripts/install.js --verify --config-root .",
+    "validate:cowork": "node scripts/validate-cowork-package.js",
+    "verify:cowork:remote": "node scripts/check-cowork-remote.mjs",
+    "build:cowork": "node scripts/build-cowork-package.js",
+    "toolkit:dcr:login": "npx -y @microsoft/m365agentstoolkit-cli@latest auth login m365 --telemetry false",
+    "toolkit:dcr:doctor": "npx -y @microsoft/m365agentstoolkit-cli@latest doctor --telemetry false",
+    "toolkit:dcr:provision": "npx -y @microsoft/m365agentstoolkit-cli@latest provision --env dev --folder toolkit/evolver-cowork-dcr --telemetry false",
+    "toolkit:dcr:validate": "npx -y @microsoft/m365agentstoolkit-cli@latest validate --env dev --folder toolkit/evolver-cowork-dcr --telemetry false",
+    "toolkit:dcr:package": "npx -y @microsoft/m365agentstoolkit-cli@latest package --env dev --folder toolkit/evolver-cowork-dcr --telemetry false",
+    "toolkit:dcr:publish": "npx -y @microsoft/m365agentstoolkit-cli@latest publish --env dev --folder toolkit/evolver-cowork-dcr --telemetry false",
+    "security:sast": "node scripts/security-scan.js",
+    "security:deps": "npm audit --omit=dev --audit-level=high",
+    "security:all": "npm run security:deps && npm run security:sast",
+    "check": "npm run security:sast && npm test && npm run validate:cowork",
     "pack:dry": "npm pack --dry-run"
   },
   "keywords": [
