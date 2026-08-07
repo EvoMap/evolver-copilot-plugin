@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.2.0",
+  "default_evaluators": {
+    "Relevance": {},
+    "Coherence": {}
+  },
+  "items": [
+    {
+      "prompt": "Connect to EvoMap, call gep_identity, and then call gep_status. Stop if either call fails.",
+      "expected_response": "The response reports only real EvoMap connector results and stops if authentication or either tool call fails."
+    }
+  ]
+}

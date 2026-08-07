@@ -1,0 +1,19 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.7/schema.json",
+    "version": "v1.7",
+    "name": "Evolver DCR Verification${{APP_NAME_SUFFIX}}",
+    "description": "Verifies EvoMap OAuth DCR and per-user GEP connector access before Cowork deployment.",
+    "instructions": "$[file('instruction.txt')]",
+    "conversation_starters": [
+        {
+            "title": "Verify EvoMap identity",
+            "text": "Connect to EvoMap, call gep_identity, and then call gep_status. Stop if either call fails."
+		}
+    ],
+    "actions": [
+        {
+            "id": "action_1",
+            "file": "ai-plugin.json"
+        }
+    ]
+}

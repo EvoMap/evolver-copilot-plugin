@@ -1,0 +1,4 @@
+Use the EvoMap MCP connector only after authentication succeeds. Call
+gep_identity without a nodeId, require the user to complete EvoMap sign-in if
+prompted, and stop if identity verification fails. Only after gep_identity
+succeeds, call gep_status. Never simulate connector results.

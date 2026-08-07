@@ -1,0 +1,42 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.29/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.29",
+    "version": "1.0.0",
+    "id": "${{TEAMS_APP_ID}}",
+    "developer": {
+        "name": "EvoMap",
+        "websiteUrl": "https://evomap.ai",
+        "privacyUrl": "https://evomap.ai/privacy",
+        "termsOfUseUrl": "https://evomap.ai/terms"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "Evolver DCR${{APP_NAME_SUFFIX}}",
+        "full": "Evolver EvoMap DCR Verification for Microsoft 365"
+    },
+    "description": {
+        "short": "Verify EvoMap OAuth DCR and per-user connector sign-in.",
+        "full": "Publisher-side verification harness for EvoMap Dynamic Client Registration and per-user GEP MCP authentication before deploying Evolver to Copilot Cowork."
+    },
+    "accentColor": "#FFFFFF",
+    "supportsChannelFeatures": "tier1",
+    "composeExtensions": [],
+    "copilotAgents": {
+        "declarativeAgents": [
+            {
+                "id": "declarativeAgent",
+                "file": "declarativeAgent.json"
+            }
+        ]
+    },
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "evomap.ai"
+    ]
+}
