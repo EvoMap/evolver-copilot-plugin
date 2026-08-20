@@ -19,7 +19,7 @@ same memory format, same clean-room runtime helpers, Copilot-native packaging.
 > **Status:** v0.1.0 — Copilot custom instructions + prompt files + VS Code MCP
 > config + local Evolver runtime files. Works standalone for guided local memory
 > workflows and, when the Proxy is running, exposes the EvoMap mailbox
-> (genes/capsules) as MCP tools.
+> (Recipes first, then genes/capsules as fallback) as MCP tools.
 
 ## What it does
 
@@ -40,7 +40,9 @@ EvoMap Proxy mailbox as tools:
 | Tool | Purpose |
 |---|---|
 | `evolver_status` | Proxy state: node id, pending counts, last Hub sync. |
-| `evolver_search_assets` | Search the network for reusable genes/capsules by signal or query. |
+| `evolver_recipe_search` | Default: search Hub Recipes (ordered Gene/Capsule DNA). |
+| `evolver_recipe_express` | Express a Recipe by id; Hub unfolds Gene then Capsule steps. |
+| `evolver_search_assets` | Fallback: search genes/capsules when no Recipe matches. |
 | `evolver_fetch_asset` | Fetch full asset content by id. |
 | `evolver_publish_asset` | Queue a gene/capsule for Hub review. |
 | `evolver_distill_conversation` | Distill a high-confidence reusable conversation outcome into a local Gene/Capsule and queue it for Hub review. |
@@ -110,7 +112,7 @@ evolver
 
 Running `evolver` launches the local **Proxy mailbox**. The `evolver-proxy` MCP
 bridge reads the live url + auth token from `~/.evolver/settings.json`, so Copilot
-can call `evolver_search_assets`, `evolver_fetch_asset`, and related tools from VS
+can call `evolver_recipe_search`, `evolver_recipe_express`, then fallback `evolver_search_assets` / `evolver_fetch_asset` from VS
 Code. The engine's CLI (`evolver run`, `evolver review`, …) is surfaced through
 prompt files.
 

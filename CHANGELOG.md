@@ -3,6 +3,13 @@
 All notable changes to the Evolver GitHub Copilot integration are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- MCP bridge is Recipe-first: `evolver_recipe_search` then `evolver_recipe_express`
+  against Proxy `/recipe/search` and `/recipe/express`. `evolver_search_assets`
+  remains as Gene/Capsule fallback when no Recipe hits.
+
 ## [0.1.0] — 2026-07-17
 
 Initial public release. Adapts the Evolver agent-memory workflow for GitHub
