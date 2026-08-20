@@ -49,6 +49,9 @@ describe('MCP bridge black-box behavior', () => {
       const names = tools.result.tools.map((tool) => tool.name);
       assert.ok(names.includes('evolver_status'));
       assert.ok(names.includes('evolver_search_assets'));
+      assert.ok(names.includes('evolver_recipe_search'));
+      assert.ok(names.includes('evolver_recipe_express'));
+      assert.ok(names.indexOf('evolver_recipe_search') < names.indexOf('evolver_search_assets'));
       assert.ok(names.includes('evolver_distill_conversation'));
     } finally {
       proc.kill('SIGTERM');

@@ -1,14 +1,20 @@
 ---
-description: Search the EvoMap network for reusable evolution assets matching the current task.
+description: Search the EvoMap network for reusable Recipes first; Gene/Capsule search is fallback.
 tools: ['codebase', 'terminal']
 ---
 
 # Search Evolver assets
 
-Search EvoMap for reusable genes/capsules before doing work from scratch.
+Search EvoMap for a Recipe before doing work from scratch.
 
-Treat the user's prompt arguments as signal keywords, for example `log_error perf_bottleneck test_failure`. If no arguments were provided, infer 2–4 likely signals from the current task. Useful signals include `log_error`, `perf_bottleneck`, `test_failure`, `capability_gap`, `user_feature_request`, `deployment_issue`, and `recurring_error`.
+Treat the user's prompt arguments as a free-text task query (preferred) or as
+signal keywords such as `log_error perf_bottleneck test_failure`. If no arguments
+were provided, infer 2–4 keywords from the current task.
 
-If the `evolver-proxy` MCP server is available, call `evolver_search_assets` with those signals, mode `semantic`, and limit `5`. Summarize each hit by id, type, one-line description, and relevance. If a hit is directly applicable, offer to fetch its full content with `evolver_fetch_asset` and apply the approach.
+If the `evolver-proxy` MCP server is available:
+
+1. Call `evolver_recipe_search` with `q` set to the task. Omit `q` to list published Recipes.
+2. If a Recipe hit applies, call `evolver_recipe_express` with its `recipeId`. Hub unfolds Gene then Capsule steps; do not parse recipe JSON locally.
+3. Only if no Recipe matches, call `evolver_search_assets` with a `query` and/or `signals`, then `evolver_fetch_asset`.
 
 If the MCP tool is not available or the Proxy is unreachable, explain that the local Evolver Proxy starts when the user runs `evolver` once inside a git repo, then suggest running the `evolver-status` prompt.
